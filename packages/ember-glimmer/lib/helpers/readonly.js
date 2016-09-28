@@ -7,8 +7,10 @@ import { unMut } from './mut';
 
 
 /**
-  The `readonly` helper let's you specify that when you updated a passed in
-  value in a child component, it does not update in the parent component.
+  The `readonly` helper let's you specify that when you updated a value passed in
+  to a child component, it does not update in the parent component.
+  
+  ### Values (numbers, strings)
   
   To specify that a parameter is read-only, when invoking the child `Component`:
   
@@ -48,9 +50,11 @@ import { unMut } from './mut';
   {{my-child childClickCount=(readonly totalClicks)}}
   ```
   
-  _Note_: This works for values like numbers and strings, but not for objects
-  and arrays, because what is immutable is the reference. You can think of it
-  like the `const` ES6 keyword.
+  ### References (Objects, Arrays)
+  
+  Notice that while this works for values like numbers and strings, because
+  they're immutable, it won't work for Object and Array. Think of it as the
+  ES6 `const` keyword.
  
   @method readonly
   @param {Object} [attr] the read-only attribute.
