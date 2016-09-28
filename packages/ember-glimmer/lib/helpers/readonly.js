@@ -10,8 +10,6 @@ import { unMut } from './mut';
   The `readonly` helper let's you specify that when you updated a value passed in
   to a child component, it does not update in the parent component.
   
-  ### Values (numbers, strings)
-  
   To specify that a parameter is read-only, when invoking the child `Component`:
   
     ```javascript
@@ -22,7 +20,7 @@ import { unMut } from './mut';
   ```
   
   ```handlebars
-  {{totalClicks}} // -> 3
+  {{log totalClicks}} // -> 3
   {{my-child childClickCount=(readonly totalClicks)}}
   ```
   
@@ -41,21 +39,62 @@ import { unMut } from './mut';
   
   ```handlebars
   // my-child.hbs
-  {{childClickCount}} // -> 4
+  {{log childClickCount}} //-> 4
   ```
   
   ```handlebars
   // my-parent.hbs
-  {{totalClicks}} // -> 3
+  {{log totalClicks}} //-> 3
   {{my-child childClickCount=(readonly totalClicks)}}
   ```
   
-  ### References (Objects, Arrays)
+  ### Objects and Arrays
   
-  Notice that while this works for values like numbers and strings, because
-  they're immutable, it won't work for Object and Array. Think of it as the
-  ES6 `const` keyword.
- 
+  Note that while properties passed in as `readonly` parameters won't update
+  the property itself, if it is an Object or an Array, you can still modify
+  properties of it and it'll update in the parent. You can think of this as
+  working similarly to the `const` keyword introduced in ES6. Let's look at
+  an example:
+  
+  First let's set up the parent component:
+  
+  ```javascript
+  // my-parent.js
+  export default Ember.Component.extend({
+    clicks: { total: 3 }
+  });
+  ```
+  
+  ```handlebars
+  // my-parent.hbs
+  {{log clicks.total}} //-> 3
+  {{my-child childClicks=(readonly clicks)}}
+  ```
+  
+  Now, if you update the `total` property of `childClicks`:
+  
+  ```javascript
+  // my-child.js
+  export default Ember.Component.extend({
+    click() {
+      this.get('clicks').incrementProperty('total');
+    }
+  });
+  ```
+  
+  You will see the following happen:
+  
+  ```handlebars
+  // my-parent.hbs
+  {{log clicks.total}} //-> 4
+  {{my-child childClicks=(readonly clicks)}}
+  ```
+  
+  ```handlebars
+  // my-child.hbs
+  {{log childClicks.total}} //-> 4
+  ```
+
   @method readonly
   @param {Object} [attr] the read-only attribute.
   @for Ember.Templates.helpers
